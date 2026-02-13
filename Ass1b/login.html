@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            padding-top: 30px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 30px;
+            width: 520px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+            margin-right: 15px;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Login Form</h2>
+
+        <form onsubmit="return validateForm()">
+
+            <label>Name</label>
+            <input type="text" id="name">
+            <div class="error" id="nameError"></div>
+
+            <label>Mobile</label>
+            <input type="text" id="mobile">
+            <div class="error" id="mobileError"></div>
+
+            <label>Email</label>
+            <input type="text" id="email">
+            <div class="error" id="emailError"></div>
+
+            <label>Password</label>
+            <input type="password" id="password">
+            <div class="error" id="passwordError"></div>
+
+            <label>
+            <input type="checkbox" onclick="togglePassword()">
+            </label>
+
+
+            <label>Address</label>
+            <textarea id="address" rows="3" placeholder="House no, Street, City, Pincode"></textarea>
+            <div class="error" id="addressError"></div>
+
+            <label>City</label>
+            <select id="city">
+                <option value="">-- Select City --</option>
+                <option>Pune</option>
+                <option>Mumbai</option>
+                <option>Delhi</option>
+            </select>
+            <div class="error" id="cityError"></div>
+
+            <label>Gender</label>
+            <div class="checkbox-group">
+                <label><input type="radio" name="gender" value="Male"> Male</label>
+                <label><input type="radio" name="gender" value="Female"> Female</label>
+            </div>
+            <div class="error" id="genderError"></div>
+
+            <label>Hobbies</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" class="hobby" value="Singing"> Singing</label>
+                <label><input type="checkbox" class="hobby" value="Drawing"> Drawing</label>
+                <label><input type="checkbox" class="hobby" value="Reading"> Reading</label>
+                <label><input type="checkbox" id="otherCheck"> Other</label>
+            </div>
+
+            <input type="text" id="otherHobby" placeholder="Specify other hobby" style="display:none;">
+            <div class="error" id="hobbyError"></div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("otherCheck").addEventListener("change", function () {
+            document.getElementById("otherHobby").style.display =
+                this.checked ? "block" : "none";
+        });
+
+        function validateForm() {
+            document.querySelectorAll(".error").forEach(e => e.innerHTML = "");
+
+            let valid = true;
+
+            let name = document.getElementById("name").value.trim();
+            let mobile = document.getElementById("mobile").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value;
+            let address = document.getElementById("address").value.trim();
+            let city = document.getElementById("city").value;
+            let gender = document.querySelector('input[name="gender"]:checked');
+
+            let hobbies = [];
+            document.querySelectorAll(".hobby:checked").forEach(h => hobbies.push(h.value));
+
+            if (document.getElementById("otherCheck").checked) {
+                let other = document.getElementById("otherHobby").value.trim();
+                if (other === "") {
+                    document.getElementById("hobbyError").innerHTML = "Specify other hobby";
+                    valid = false;
+                } else {
+                    hobbies.push(other);
+                }
+            }
+
+            if (!/^[A-Za-z ]+$/.test(name)) {
+                document.getElementById("nameError").innerHTML = "Only alphabets and spaces allowed";
+                valid = false;
+            }
+
+            if (!/^[6-9][0-9]{9}$/.test(mobile)) {
+                document.getElementById("mobileError").innerHTML = "Invalid mobile number";
+                valid = false;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById("emailError").innerHTML = "Invalid email format";
+                valid = false;
+            }
+
+            if (!/(?=.*[A-Z])(?=.*\d)(?=.*[@#$!]).{8,}/.test(password)) {
+                document.getElementById("passwordError").innerHTML =
+                    "Min 8 chars, 1 uppercase, 1 number, 1 special";
+                valid = false;
+            }
+
+            if (address.length < 10) {
+                document.getElementById("addressError").innerHTML =
+                    "Address should be at least 10 characters";
+                valid = false;
+            }
+
+            if (city === "") {
+                document.getElementById("cityError").innerHTML = "Select a city";
+                valid = false;
+            }
+
+            if (!gender) {
+                document.getElementById("genderError").innerHTML = "Select gender";
+                valid = false;
+            }
+
+            if (hobbies.length === 0) {
+                document.getElementById("hobbyError").innerHTML = "Select at least one hobby";
+                valid = false;
+            }
+
+            if (valid) {
+                localStorage.setItem("userData", JSON.stringify({
+                    name,
+                    mobile,
+                    email,
+                    address,
+                    city,
+                    gender: gender.value,
+                    hobbies
+                }));
+
+                window.location.href = "details.html";
+            }
+
+            return false;
+        }
+
+        function togglePassword() {
+            const pwd = document.getElementById("password");
+            pwd.type = (pwd.type === "password") ? "text" : "password";
+        }
+    </script>
+
+</body>
+
+</html>

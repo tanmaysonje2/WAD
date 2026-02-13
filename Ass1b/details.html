@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f5;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            width: 480px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card" id="output"></div>
+
+    <script>
+        let data = localStorage.getItem("userData");
+
+        if (!data) {
+            document.getElementById("output").innerHTML =
+                "<h2>No data found</h2><p>Please submit the form first.</p>";
+        } else {
+            let user = JSON.parse(data);
+
+            document.getElementById("output").innerHTML = `
+        <h2>User Details</h2>
+        <p><b>Name:</b> ${user.name}</p>
+        <p><b>Mobile:</b> ${user.mobile}</p>
+        <p><b>Email:</b> ${user.email}</p>
+        <p><b>Address:</b><br>${user.address}</p>
+        <p><b>City:</b> ${user.city}</p>
+        <p><b>Gender:</b> ${user.gender}</p>
+        <p><b>Hobbies:</b> ${user.hobbies.join(", ")}</p>
+    `;
+        }
+    </script>
+
+</body>
+
+</html>
